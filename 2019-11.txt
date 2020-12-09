@@ -1,0 +1,320 @@
+15: {text: 'Redis version 4.0.9
+
+    QA DB Box has redis version 3.2.12
+
+    Even new QA-DB has redis version 3.2.12
+
+    yum install wget
+
+    wget http://download.redis.io/releases/redis-4.0.9.tar.gz
+
+    yum groupinstall "Development Tools"
+
+    cd redis-4.0.9
+
+    make
+
+    yum install tcl
+
+    make test
+
+    sudo make install
+
+    mkdir /etc/redis
+
+    sudo mkdir -p /var/redis
+
+    cp redis.conf /etc/redis
+
+    cp sentinel.conf /etc/redis
+
+
+    edit /etc/redis/redis.conf with following lines
+
+    port  6379                #default port is already 6379.
+
+    daemonize yes                #run as a daemon
+
+    supervised systemd            #signal systemd
+
+    pidfile /var/run/redis.pid         #specify pid file
+
+    loglevel notice                #server verbosity level
+
+    logfile /var/log/redis.log        #log file name
+
+    dir  /var/redis/            #redis directory
+
+
+    https://laymanclass.com/how-to-build-redis-cluster-master-slave-sentinels-centos7/
+
+
+    Make sure not to bind sentinel to 127.0.0.1 on all nodes else it will not detect
+    other sentinels
+
+
+    edit /etc/redis/sentinel.conf with following lines
+
+    bind 192.168.10.10
+
+    port 26379
+
+    sentinel monitor mymaster 192.167.10.10 6379 2
+
+    sentinel down-after-milliseconds mymaster 5000
+
+    sentinel parallel-syncs mymaster 1 (should be immediately after "sentinel down-after-milliseconds
+    mymaster 5000" line else redis-sentinel doesnt start)
+
+    sentinel failover-timeout mymaster 10000
+
+    daemonize yes
+
+    pidfile "/var/run/redis-sentinel.pid"
+
+    logfile "/var/log/redis-sentinel.log"
+
+    dir "/var/redis/"
+
+
+    edit /etc/systemd/system/redis.service
+
+    [Unit]
+
+    Description=Redis In-Memory Data Store
+
+    After=network.target
+
+
+    [Service]
+
+    User=root
+
+    Group=root
+
+    ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
+
+    ExecStop=/usr/local/bin/redis-cli shutdown
+
+    Restart=always
+
+    Type=forking
+
+
+    [Install]
+
+    WantedBy=multi-user.target
+
+
+    edit /etc/systemd/system/redis-sentinel.service
+
+    [Unit]
+
+    Description=Redis-Sentinel
+
+    After=network.target
+
+
+    [Service]
+
+    Type=forking
+
+    User=root
+
+    Group=root
+
+    PIDFile=/var/run/redis-sentinel.pid
+
+    ExecStart=/usr/local/bin/redis-server /etc/redis/sentinel.conf --sentinel
+
+    ExecStop=/bin/kill -s TERM $MAINPID
+
+    Restart=always
+
+
+    [Install]
+
+    WantedBy=multi-user.target
+
+
+    sudo systemctl start redis
+
+    sudo systemctl enable redis
+
+    sudo systemctl status redis
+
+
+    systemctl start redis-sentinel.service
+
+    systemctl enable redis-sentinel.service
+
+    systemctl status redis-sentinel.service
+
+
+    Test with
+
+    $ redis-cli
+
+    Test connection to server using ping command:
+
+    127.0.0.1:6379> ping
+
+    Use the echo command to echo a given string:
+
+    127.0.0.1:6379> echo "Tecmint is testing Redis"
+
+    You can also set a key value using the set command like this:
+
+    127.0.0.1:6379> set mykey "Tecmint is testing Redis"
+
+    Now view the value of mykey:
+
+    127.0.0.1:6379> get mykey
+
+
+    Restart and see if value still there
+
+    127.0.0.1:6379> exit
+
+    $ sudo systemctl restart redis
+
+    $ redis-cli
+
+    127.0.0.1:6379> get mykey
+
+
+    Delete the key and verify
+
+    127.0.0.1:6379> del mykey
+
+    127.0.0.1:6379> get mykey
+
+
+    edit /etc/redis/redis.conf
+
+    appendonly yes
+
+    appendfsync everysec
+
+
+    On the master redis.conf
+
+    bind ip 127.0.0.1 <master-ip>
+
+    requirepass master_password
+
+    restart redis
+
+
+    On the slave redis.conf
+
+    bind ip 127.0.0.1 <slave-ip> (needed probably in case of failover)
+
+    masterauth  master_password(test123)
+
+    requirepass slave_password(test123)
+
+    restart redis
+
+
+    on the master and on the slave
+
+    redis-cli
+
+    auth test123(different password for slave if configured differently)
+
+    info replication
+
+
+    To test sentinel
+
+    redis-cli -h <hostip> -p 26379
+
+    sentinel get-master-addr-by-name mymaster
+
+    sentinel slaves mymaster
+
+    sentinel master mymaster
+
+    sentinel sentinels mymaster
+
+
+    For redis sentinel to connect to redis servers behind a authenticated setup execute
+    these commands on respective nodes, verify auth-pass line added in all sentinel.conf
+    files and restart all sentinels
+
+    redis-cli -h 116.203.127.81 -p 26379 sentinel set mymaster auth-pass test123
+
+    redis-cli -h 195.201.40.98 -p 26379 sentinel set mymaster auth-pass test123
+
+    redis-cli -h 78.47.142.212 -p 26379 sentinel set mymaster auth-pass test123
+
+'}
+18: {text: "Date : 04/11/19\nMr. Vijay\nHR\nBridgelabz,\nMalhotra Chambers, First
+    Floor, Govandi East, Mumbai, Maharashtra 400088.\n\nDear Vijay sir,\n                 Please
+    accept my relieving letter. Because of my health issues i can't continue with
+    Network Intelligence Ind Pvt Ltd. I hope i'm doing good work with your organisation.
+    please accept this letter to grow my career for future. It has been a pleasure
+    working with you and your team over the last 9 months.\n Vijay sir, thank you
+    for the opportunity to work for Bridgelabz Company. I wish you and your staff
+    all the best and I look forward to staying in touch with you. You can email me
+    anytime at kuchipudiyuvaraj@gmail.com or call me at +91-8465005657. Please acknowledge
+    the same sir.\n\n\nSincerely,\nYuvaraj Yadav."}
+20: {text: "input {\n     beats {\n         port => \"5044\"\n    }\n}\n\nfilter {\n\n
+    \    if ([fields][log_type] == \"nginx-access\") {\n          grok {\n               match
+    => {\"message\" => \"%{IPORHOST:clientip} - - \\[%{HTTPDATE:timestamp}\\] \\\\\"%{WORD:method}
+    %{NOTSPACE:request} HTTP\\/%{NUMBER:httpversion}\\\\\" %{NUMBER:response} %{NUMBER:bytes}
+    \\\\\"%{GREEDYDATA:osInfo}\\\"\" }\n          }\n      }\n\n     else if ([fields][log_type]
+    == \"nginx-error\") {\n          grok {\n               match => {\"message\"
+    => \"%{IPORHOST:clientip} - - \\[%{HTTPDATE:timestamp}\\] \\\\\"%{WORD:method}
+    %{NOTSPACE:request} HTTP\\/%{NUMBER:httpversion}\\\\\" %{NUMBER:response} %{NUMBER:bytes}
+    \\\\\"%{GREEDYDATA:osInfo}\\\"\" }\n\n                  }\n     }\n     if ([fields][log_type]
+    == \"syslogs\") {\n          grok {\n              match => {\"message\" => \"%{IPORHOST:clientip}
+    - - \\[%{HTTPDATE:timestamp}\\] \\\\\"%{WORD:method} %{NOTSPACE:request} HTTP\\/%{NUMBER:httpversion}\\\\\"
+    %{NUMBER:response} %{NUMBER:bytes} \\\\\"%{GREEDYDATA:osInfo}\\\"\"}\n\n    }\n}\n}\n
+    output {\n        if ([fields][log_type] == \"nginx-access\") {\n       elasticsearch
+    {\n             elasticsearch {\n       hosts => [ \"localhost:9200\" ]\n       index
+    => \"nginx-access-%{+YYYY.MM.dd}\"\n       #document_type => \"nginx_access.logs\"\n
+    \ }\n}\n   else if ([fields][log_type] == \"nginx-error\") {\n    elasticsearch
+    {\n       hosts => [ \"localhost:9200\" ]\n       index => \"nginx-error-%{+YYYY.MM.dd}\"\n
+    \      #document_type => \"nginx_error.logs\"\n   }\n     }\nif ([fields][log_type]
+    == \"syslogs\") {\n    elasticsearch {\n       hosts => [ \"localhost:9200\" ]\n
+    \      index => \"syslogs-%{+YYYY.MM.dd}\"\n          # stdout { codec => rubydebug
+    }    \n  }\n    }\n}\n"}
+21: {text: "cd  /tmp \nwget http://downloads.sourceforge.net/project/squirrelmail/stable/1.4.22/squirrelmail-webmail-1.4.22.zip\nsudo
+    apt-get install unzip\nsudo unzip squirrelmail-webmail-1.4.22.zip\nsudo mv squirrelmail-webmail-1.4.22/
+    /var/www/html/mail\nsudo chown -R www-data:www-data /var/www/html/mail\nsudo cp
+    /var/www/html/mail/config/config_default.php  /var/www/html/mail/config/config.php\n\n\nsudo
+    adduser yuvaraj  #for adding users\nsudo useradd -G group1 yuvi    #for adding
+    user to particular group\ngroups yuvi   #for checking users groupname\nid yuvi
+    \   #complete information about user"}
+22: {text: 'iptables -A INPUT -s [IP-ADDRESS] -j DROP   #block ip address from accessing
+    server
+
+    iptables -A INPUT -s [IP-ADDRESS] -p tcp --destination-port [port_number] -j DROP  #Aternate
+    option – Block access to a specific port
+
+    sudo invoke-rc.d iptables-persistent save   #Save your firewall rules with this
+    command
+
+    sudo apt-get update
+
+    sudo apt-get install iptables-persistent  #for installing iptables-persistent'}
+25: {text: '9538987654  -- pullarao
+
+    Ynv4AL3AdMMFgFsd
+
+    e778963eac3743c781e3f905d6ac79c9'}
+28: {text: '*/NC-8879
+
+
+    aneeskhan'}
+29: {text: "CREATE USER 'aneeskhan'@'%' IDENTIFIED BY 'V2WeeZybq*N6roEqs';\nGRANT
+    SELECT ON * . * TO 'aneeskhan'@'%';\nFLUSH PRIVILEGES; \n\nCREATE USER 'giridaran'@'%'
+    IDENTIFIED BY 'tRtAms2%naZ8Dz2H3';\nGRANT SELECT ON * . * TO 'giridaran'@'%';\nFLUSH
+    PRIVILEGES; \n\nCREATE USER 'slingesh'@'%' IDENTIFIED BY 'nMS8Y2Cqb$CDVnq5f';\nGRANT
+    SELECT ON * . * TO 'slingesh'@'%';\nFLUSH PRIVILEGES; \n\n-------------------------------------------------\n\nYour
+    access credentials are as follows\n\nUsername : \nPassword: \nServer: 159.69.240.234\nPort:
+    3120\n\nAccess shared\n\n------------------------------------------------------------------------------\n\n\nCREATE
+    USER 'vikneswar'@'%' IDENTIFIED BY 'AaYQ7V9xW$7e5XvY9';\nGRANT SELECT ON * . *
+    TO 'vikneswar'@'%';\nFLUSH PRIVILEGES; \n\n-------------------------------------------------------------------------------------------------------\n\na192bc3593ac438ca2cdd6c683ca6f82\n"}
