@@ -300,12 +300,8 @@
     sudo apt-get update
 
     sudo apt-get install iptables-persistent  #for installing iptables-persistent'}
-25: {text: '9538987654  -- pullarao
 
-    Ynv4AL3AdMMFgFsd
-
-    e778963eac3743c781e3f905d6ac79c9'}
-28: {text: '*/NC-8879
+ 
 
 
     aneeskhan'}
@@ -317,4 +313,4 @@
     access credentials are as follows\n\nUsername : \nPassword: \nServer: 159.69.240.234\nPort:
     3120\n\nAccess shared\n\n------------------------------------------------------------------------------\n\n\nCREATE
     USER 'vikneswar'@'%' IDENTIFIED BY 'AaYQ7V9xW$7e5XvY9';\nGRANT SELECT ON * . *
-    TO 'vikneswar'@'%';\nFLUSH PRIVILEGES; \n\n-------------------------------------------------------------------------------------------------------\n\na192bc3593ac438ca2cdd6c683ca6f82\n"}
+    TO 'vikneswar'@'%'; \n\n-------------------------------------------------------------------------------------------------------\n\na192bc3593ac438ca2cdd6c683ca6f82\n"}
